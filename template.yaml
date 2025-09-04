@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS SAM template for wizard-excel-service
+
+Globals:
+  Function:
+    Runtime: nodejs22.x
+    Timeout: 60
+    MemorySize: 256
+    Tracing: Active
+    Environment:
+      Variables:
+        AWS_S3_BUCKET: !Ref Bucket
+
+Parameters:
+  Bucket:
+    Description: The name of the S3 bucket where the Excel file will be stored.
+    Type: String
+
+Resources:
+  ExcelQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: 'wizard-excel-service-queue'
+      VisibilityTimeout: 60
+
+  ExcelService:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: build
+      Description: Lambda entrypoint for wizard excel service.
+      FunctionName: 'wizard-excel-service'
+      Handler: index.handler
+      Timeout: 60
+      Events:
+        ExcelQueueEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt ExcelQueue.Arn
+            BatchSize: 1
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+              Resource:
+                - !Sub 'arn:aws:s3:::${AWS_S3_BUCKET}/*'
+
+Outputs:
+  ExcelQueue:
+    Description: 'The ARN of the Excel SQS queue.'
+    Value: !GetAtt ExcelQueue.Arn
+
+  ExcelService:
+    Description: 'The ARN of the Lambda function responsible for wizard excel service.'
+    Value: !GetAtt ExcelService.Arn
