@@ -59,7 +59,7 @@ Install dependencies:
 npm install
 ```
 
-Run the service using using AWS SAM CLI:
+Run the service using AWS SAM CLI:
 
 ```bash
 npm run dev

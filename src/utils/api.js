@@ -5,7 +5,7 @@ export const fetchJSONFromAPI = async (params, arr = [], batch = 1) => {
   try {
     const { api_token, api_url, limit = 1000, offset = 0, order = 'created_at|desc', total_limit = 5000 } = params || {}
     if (!api_token || !api_url) {
-      console.log('No api_token or api_url provided')
+      console.log('🚀 [EXCEL-LAMBDA] No api_token or api_url provided ✨')
       return false
     }
 
@@ -15,14 +15,14 @@ export const fetchJSONFromAPI = async (params, arr = [], batch = 1) => {
     )
     const { data, meta_data } = response?.data || {}
 
-    console.log(`Fetched ${size(data)} from API server for batch ${batch}`)
+    console.log(`🚀 [EXCEL-LAMBDA] Fetched ${size(data)} from API server for batch ${batch} ✨`)
 
     if (size(data)) arr.push(...data)
 
     const { filtered_rows, total_rows } = meta_data || {}
     if (batch === 1) {
       console.log(
-        `There are ${filtered_rows} filtered rows & ${total_rows} total rows and we will fetch ${total_limit} rows.`
+        `🚀 [EXCEL-LAMBDA] There are ${filtered_rows} filtered rows & ${total_rows} total rows and we will fetch ${total_limit} rows. ✨`
       )
     }
 
@@ -32,7 +32,7 @@ export const fetchJSONFromAPI = async (params, arr = [], batch = 1) => {
 
     return arr
   } catch (err) {
-    console.error('Error happened in fetchJSONFromAPI:', err)
+    console.error('❌ [EXCEL-LAMBDA] Error happened in fetchJSONFromAPI 💥', err)
     throw err
   }
 }
